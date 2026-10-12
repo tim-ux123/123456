@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>青春不喂狗 · 个人主页</title>
+<style>
+  :root {
+    --glass: rgba(244, 143, 177, 0);
+    --glass-border: rgba(255, 255, 255, 0.24);
+    --text: #ffffff;
+    --text-dim: rgba(255, 255, 255, 0.72);
+    --accent: #f2b25c;          /* 暖琥珀，呼应背景与头像 */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { height: 100%; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    background: #0d1824;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7), 0 2px 10px rgba(0, 0, 0, 0.4);
+  }
+
+  /* ===== 背景层 ===== */
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+  }
+  .bg video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .bg-mask {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(8, 18, 28, 0.52) 0%, rgba(8, 18, 28, 0.72) 100%);
+    z-index: -1;
+  }
+
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 28px 60px;
+  }
+
+  /* ===== 玻璃面板通用 ===== */
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  }
+
+  /* ===== 顶部 ===== */
+  .hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 14px;
+    padding: 40px 28px 30px;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .avatar {
+    width: 264px;
+    height: 264px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    flex-shrink: 0;
+    box-shadow: 0 0 0 6px rgba(242, 178, 92, 0.20), 0 10px 28px rgba(0,0,0,0.4);
+  }
+
+  .name {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .meta {
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-size: 12px;
+    color: #fff;
+    background: rgba(244, 143, 177, 0.30);
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    padding: 4px 14px;
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .tag.accent {
+    background: rgba(242, 178, 92, 0.18);
+    border-color: rgba(242, 178, 92, 0.45);
+    color: #ffd9a0;
+  }
+
+  /* 中间签名 */
+  .quote {
+    text-align: center;
+    font-size: 23px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    padding: 0 14px;
+    color: #fff;
+    text-shadow: 0 2px 16px rgba(0,0,0,0.55);
+  }
+  .quote .q-mark {
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  /* 右侧时钟 */
+  .clock {
+    position: absolute;
+    top: 22px;
+    right: 26px;
+    text-align: right;
+    z-index: 2;
+  }
+
+  .clock .time {
+    font-size: 26px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+  }
+
+  .clock .date {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  /* 雷达扫描动画 */
+  .radar {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 14px 0 0 auto;
+    border-radius: 50%;
+    border: 1px solid rgba(242,178,92,0.5);
+    background:
+      radial-gradient(circle, transparent 32%, rgba(242,178,92,0.12) 33%, transparent 34%),
+      radial-gradient(circle, transparent 58%, rgba(242,178,92,0.12) 59%, transparent 60%);
+    overflow: hidden;
+  }
+  .radar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: conic-gradient(from 0deg, rgba(242,178,92,0.55), transparent 25%);
+    animation: spin 3s linear infinite;
+  }
+  .radar .dot {
+    position: absolute;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #ffd9a0;
+    top: 16px; right: 12px;
+    box-shadow: 0 0 8px #ffd9a0;
+    animation: blink 1.6s ease-in-out infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+  /* ===== 项目卡片区 ===== */
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 34px 4px 18px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  .section-title::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--glass-border), transparent);
+  }
+
+  /* ===== 关于我 ===== */
+  .about-panel {
+    padding: 22px 24px;
+    margin-top: 6px;
+  }
+
+  .about-text {
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text);
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px 28px;
+    margin-top: 18px;
+  }
+
+  .about-item {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+    align-items: baseline;
+  }
+
+  .about-item .k {
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  .about-item .v {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 600px) {
+    .about-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ===== 技能 ===== */
+  .skill-row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 8px 0;
+    font-size: 14px;
+  }
+  .skill-level {
+    color: var(--accent);
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 46px;
+  }
+  .skill-items { color: var(--text); }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+  }
+
+  .card {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    text-decoration: none;
+    color: var(--text);
+    border: 1px solid var(--glass-border);
+    background:
+      linear-gradient(180deg, rgba(20,32,46,0.0) 30%, rgba(12,22,32,0.85) 100%),
+      var(--card-img, linear-gradient(135deg, #35506e, #1c2b3a));
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 34px rgba(0,0,0,0.45);
+  }
+
+  .card .body {
+    padding: 16px 16px 14px;
+  }
+
+  .card .title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .card .sub {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  .card .go {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  .card .hint {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 11px;
+    color: #f0c58a;
+    background: rgba(120, 70, 20, 0.75);
+    border: 1px solid rgba(242,178,92,0.4);
+    border-radius: 999px;
+    padding: 2px 9px;
+  }
+
+  /* ===== 底部图标栏 ===== */
+  .dock {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+
+  .dock a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: var(--glass);
+    backdrop-filter: blur(22px);
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 14px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .dock a:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  /* ===== 入场动画 ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero { animation: fadeUp 0.7s ease both; }
+  .glass { animation: fadeUp 0.8s ease both; }
+  .cards { animation: fadeUp 0.9s ease both; }
+
+  /* ===== 响应式 ===== */
+  @media (max-width: 900px) {
+    .cards { grid-template-columns: repeat(2, 1fr); }
+    .clock { position: static; text-align: center; margin-top: 6px; }
+    .radar { margin: 14px auto 0; }
+  }
+
+  @media (max-width: 480px) {
+    .cards { grid-template-columns: 1fr; }
+    .quote { font-size: 16px; }
+    .name { font-size: 22px; }
+    .avatar { width: 200px; height: 200px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <video autoplay loop muted playsinline>
+    <source src="assets/background.mp4" type="video/mp4">
+  </video>
+</div>
+<div class="bg-mask"></div>
+
+<div class="wrap">
+
+  <!-- ================= 顶部：个人 + 签名 + 时钟 ================= -->
+  <header class="hero glass">
+    <!-- 右上角：时钟 + 雷达 -->
+    <div class="clock">
+      <div class="time" id="clock-time">--:--:--</div>
+      <div class="date" id="clock-date">----年--月--日</div>
+      <div class="radar"><span class="dot"></span></div>
+    </div>
+
+    <!-- 居中：头像 + 昵称 + 签名 -->
+    <img class="avatar" src="assets/avatar.jpg" alt="头像">
+    <div class="name">青春不喂狗</div>
+    <div class="meta">朱新可 · 计算机科学与技术 · 上海杉达学院</div>
+    <div class="quote"><span class="q-mark">「</span>不要为打翻的牛奶而哭泣<span class="q-mark">」</span></div>
+
+    <!-- 个性标签 -->
+    <div class="tags" style="margin-top:6px; justify-content:center;">
+      <span class="tag accent">ENFJ</span>
+      <span class="tag">江苏盐城</span>
+      <span class="tag">天秤座</span>
+      <!-- TODO: 想加更多标签就在这里接着写 -->
+    </div>
+  </header>
+
+  <!-- ================= 关于我 ================= -->
+  <div class="section-title">关于我</div>
+  <div class="glass about-panel">
+    <p class="about-text">
+      上海杉达学院计算机科学与技术专业在读，江苏盐城人。这个网站用来记录我做过项目和学到的技术。
+      <!-- TODO: 上面这句可以换成你自己的介绍，2~4 句，写具体的事，比如学了什么、做了什么项目、现在在找什么机会。 -->
+    </p>
+    <div class="about-grid">
+      <div class="about-item"><span class="k">籍贯</span><span class="v">江苏盐城</span></div>
+      <div class="about-item"><span class="k">生日</span><span class="v">2006.10.03</span></div>
+      <div class="about-item"><span class="k">学校</span><span class="v">上海杉达学院</span></div>
+      <div class="about-item"><span class="k">专业</span><span class="v">计算机科学与技术</span></div>
+      <div class="about-item"><span class="k">MBTI</span><span class="v">ENFJ</span></div>
+      <div class="about-item"><span class="k">爱好</span><span class="v">篮球 · 听歌 · 徒步</span></div>
+      <div class="about-item"><span class="k">求职意向</span><span class="v">待补充</span></div>
+    </div>
+  </div>
+
+  <!-- ================= 技能 ================= -->
+  <div class="section-title">技能</div>
+  <div class="glass about-panel">
+    <div class="skill-row"><span class="skill-level">熟练</span><span class="skill-items">待补充</span></div>
+    <div class="skill-row"><span class="skill-level">熟悉</span><span class="skill-items">待补充</span></div>
+    <div class="skill-row"><span class="skill-level">了解</span><span class="skill-items">待补充</span></div>
+  </div>
+
+  <!-- ================= 项目卡片 ================= -->
+  <div class="section-title">项目</div>
+
+  <div class="cards">
+
+    <!-- ============ 示例卡片：复制 / 替换 ============ -->
+    <a class="card" href="#" target="_blank" rel="noopener">
+      <span class="hint">待替换</span>
+      <div class="body">
+        <div class="title">项目名称</div>
+        <div class="sub">一句话说明这个项目是做什么的</div>
+        <span class="go">前往 →</span>
+      </div>
+    </a>
+
+    <a class="card" href="#" target="_blank" rel="noopener">
+      <span class="hint">待替换</span>
+      <div class="body">
+        <div class="title">项目名称</div>
+        <div class="sub">一句话说明这个项目是做什么的</div>
+        <span class="go">前往 →</span>
+      </div>
+    </a>
+
+    <a class="card" href="#" target="_blank" rel="noopener">
+      <span class="hint">待替换</span>
+      <div class="body">
+        <div class="title">项目名称</div>
+        <div class="sub">一句话说明这个项目是做什么的</div>
+        <span class="go">前往 →</span>
+      </div>
+    </a>
+
+    <a class="card" href="#" target="_blank" rel="noopener">
+      <span class="hint">待替换</span>
+      <div class="body">
+        <div class="title">项目名称</div>
+        <div class="sub">一句话说明这个项目是做什么的</div>
+        <span class="go">前往 →</span>
+      </div>
+    </a>
+
+    <!-- 有更多项目（最多 8 个）就复制上面的 <a class="card"> 块往下加。
+         每张卡片如果要配插画，把图片放进 assets/ 文件夹，
+         然后在 card 上写 style="--card-img: url('assets/xxx.jpg')" -->
+  </div>
+
+  <!-- ================= 联系方式 ================= -->
+  <div class="dock">
+    <a href="mailto:1594006270@qq.com">✉ 邮箱</a>
+    <a href="https://space.bilibili.com/1786903202" target="_blank" rel="noopener">📺 哔哩哔哩</a>
+    <!-- TODO: 有 GitHub 就取消注释并替换链接
+    <a href="https://github.com/你的用户名" target="_blank" rel="noopener">GitHub</a> -->
+  </div>
+
+  <footer>© 2026 青春不喂狗</footer>
+</div>
+
+<script>
+  // 实时时钟
+  const week = ["日", "一", "二", "三", "四", "五", "六"];
+  function tick() {
+    const now = new Date();
+    const pad = n => String(n).padStart(2, "0");
+    const time = pad(now.getHours()) + ":" + pad(now.getMinutes()) + ":" + pad(now.getSeconds());
+    const date = now.getFullYear() + "年" + pad(now.getMonth() + 1) + "月" +
+                 pad(now.getDate()) + "日 星期" + week[now.getDay()];
+    document.getElementById("clock-time").textContent = time;
+    document.getElementById("clock-date").textContent = date;
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body></html>
