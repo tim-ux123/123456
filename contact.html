@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>联系我 · 青春不喂狗</title>
+<style>
+  :root {
+    --glass: rgba(20, 32, 46, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.20);
+    --text: #ffffff;
+    --text-dim: rgba(255, 255, 255, 0.72);
+    --accent: #f2b25c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    background: #0d1824;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  }
+
+  .bg { position: fixed; inset: 0; z-index: -2; overflow: hidden; }
+  .bg video { width: 100%; height: 100%; object-fit: cover; }
+  .bg-mask {
+    position: fixed; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgba(8, 18, 28, 0.72) 0%, rgba(8, 18, 28, 0.85) 100%);
+  }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 26px 22px 60px; }
+
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  /* 顶部返回 */
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 18px; border-radius: 999px;
+    background: var(--glass); backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    color: var(--text); text-decoration: none; font-size: 14px;
+    transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .back:hover { transform: translateX(-3px); border-color: var(--accent); color: var(--accent); }
+
+  .page-title {
+    text-align: center; margin: 6px 0 22px;
+    font-size: 26px; font-weight: 800; letter-spacing: 2px;
+  }
+  .page-title .sub { display: block; margin-top: 8px; font-size: 14px; font-weight: 400; color: var(--text-dim); letter-spacing: 0; }
+
+  /* 联系我两块 */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .contact-card { padding: 30px 28px 26px; }
+
+  .c-avatar {
+    width: 96px; height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent);
+    display: block;
+    margin: 0 auto 14px;
+    box-shadow: 0 0 0 5px rgba(242, 178, 92, 0.18);
+  }
+  .c-name { text-align: center; font-size: 21px; font-weight: 700; }
+  .c-role { text-align: center; font-size: 13px; color: var(--text-dim); margin-top: 6px; }
+  .c-loc { text-align: center; font-size: 13px; color: var(--text-dim); margin-top: 2px; }
+
+  /* 官方社交图标 */
+  .socials { display: flex; justify-content: center; gap: 14px; margin-top: 20px; }
+  .socials a {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    text-decoration: none;
+    transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .socials a svg { width: 24px; height: 24px; fill: currentColor; }
+  .socials a:hover { transform: translateY(-3px); border-color: var(--accent); color: var(--accent); }
+
+  .contact-line {
+    display: flex; align-items: center; gap: 8px;
+    justify-content: center;
+    margin-top: 18px;
+    font-size: 14px; color: var(--text);
+  }
+  .contact-line .lbl { color: var(--text-dim); }
+  .contact-line a { color: #a8d8ff; text-decoration: none; }
+  .copy-btn {
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--accent);
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+  .copy-btn:hover { border-color: var(--accent); }
+
+  .cta-btn {
+    display: block; width: 100%;
+    margin-top: 24px; padding: 13px 20px;
+    border-radius: 999px; text-align: center;
+    text-decoration: none;
+    font-size: 15px; font-weight: 700; color: #1a1207;
+    background: linear-gradient(135deg, #ffd9a0, #f2b25c);
+    box-shadow: 0 8px 22px rgba(242, 178, 92, 0.35);
+    transition: transform 0.2s ease;
+  }
+  .cta-btn:hover { transform: translateY(-3px); }
+
+  /* 表单 */
+  .form-title { font-size: 17px; font-weight: 700; margin-bottom: 18px; }
+  .field { margin-bottom: 15px; }
+  .field label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 6px; }
+  .field input, .field textarea {
+    width: 100%; padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text); font-size: 14px; font-family: inherit;
+    outline: none; transition: border-color 0.2s ease;
+  }
+  .field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.4); }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); }
+  .field textarea { min-height: 130px; resize: vertical; }
+  .submit-btn {
+    width: 100%; padding: 13px 20px;
+    border: none; border-radius: 999px;
+    font-size: 15px; font-weight: 700; color: #fff; cursor: pointer;
+    background: linear-gradient(135deg, #e879c7, #a78bfa);
+    transition: transform 0.2s ease;
+  }
+  .submit-btn:hover { transform: translateY(-3px); }
+
+  footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--text-dim); }
+
+  /* ===== 背景音乐按钮 ===== */
+  .music-btn {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 10;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--glass);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border: 1px solid var(--glass-border);
+    color: var(--text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  }
+  .music-btn:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .music-btn .icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+  .music-btn.spinning .icon {
+    display: inline-block;
+    animation: spin 3s linear infinite;
+  }
+  .music-btn.paused {
+    opacity: 0.55;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .glass { animation: fadeUp 0.6s ease both; }
+
+  @media (max-width: 760px) {
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <video autoplay loop muted playsinline>
+    <source src="assets/background.mp4" type="video/mp4">
+  </video>
+</div>
+<div class="bg-mask"></div>
+
+<audio id="bgm" src="assets/bgm.mp3" loop preload="auto"></audio>
+<button class="music-btn paused" id="music-btn" title="播放/暂停背景音乐" aria-label="播放/暂停背景音乐">
+  <span class="icon">♪</span>
+</button>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <a class="back" href="index.html">← 返回首页</a>
+  </div>
+
+  <div class="page-title">联系我
+    <span class="sub">有合作 / 反馈 / 想聊聊的，欢迎来找我</span>
+  </div>
+
+  <div class="contact-grid">
+
+    <!-- 左侧：个人名片 -->
+    <div class="glass contact-card">
+      <img class="c-avatar" src="assets/avatar.jpg" alt="头像">
+      <div class="c-name">青春不喂狗</div>
+      <div class="c-role">计算机科学与技术 · 上海杉达学院</div>
+      <div class="c-loc">📍 江苏盐城</div>
+
+      <div class="socials">
+        <a href="https://github.com/tim-ux123" target="_blank" rel="noopener" title="GitHub">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
+        </a>
+        <a href="https://space.bilibili.com/1786903202" target="_blank" rel="noopener" title="哔哩哔哩">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.813 4.653h.854c1.51.054 2.769.578 3.773 1.574 1.004.995 1.524 2.249 1.56 3.76v7.36c-.036 1.51-.556 2.769-1.56 3.773s-2.262 1.524-3.773 1.56H5.333c-1.51-.036-2.769-.556-3.773-1.56S.036 18.858 0 17.347v-7.36c.036-1.511.556-2.765 1.56-3.76 1.004-.996 2.262-1.52 3.773-1.574h.774l-1.174-1.12a1.234 1.234 0 0 1-.373-.906c0-.356.124-.658.373-.907l.027-.027c.267-.249.573-.373.92-.373.347 0 .653.124.92.373L9.653 4.44c.071.071.134.142.187.213h4.267a.836.836 0 0 1 .16-.213l2.853-2.747c.267-.249.573-.373.92-.373.347 0 .662.151.929.4.267.249.391.551.391.907 0 .355-.124.657-.373.906zM5.333 7.24c-.746.018-1.373.276-1.88.773-.506.498-.769 1.13-.786 1.894v7.52c.017.764.28 1.395.786 1.893.507.498 1.134.756 1.88.773h13.334c.746-.017 1.373-.275 1.88-.773.506-.498.769-1.129.786-1.893v-7.52c-.017-.765-.28-1.396-.786-1.894-.507-.497-1.134-.755-1.88-.773zM8 11.107c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c0-.373.129-.689.386-.947.258-.257.574-.386.947-.386zm8 0c.373 0 .684.124.933.373.25.249.383.569.4.96v1.173c-.017.391-.15.711-.4.96-.249.25-.56.374-.933.374s-.684-.125-.933-.374c-.25-.249-.383-.569-.4-.96V12.44c.017-.391.15-.711.4-.96.249-.249.56-.373.933-.373Z"/></svg>
+        </a>
+        <a href="mailto:1594006270@qq.com" title="邮箱">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+        </a>
+      </div>
+
+      <div class="contact-line"><span class="lbl">邮箱</span> <a href="mailto:1594006270@qq.com">1594006270@qq.com</a></div>
+
+      <a class="cta-btn" href="mailto:1594006270@qq.com?subject=简历索取">📧 邮件索取简历</a>
+    </div>
+
+    <!-- 右侧：发送消息 -->
+    <div class="glass contact-card">
+      <div class="form-title">发送消息</div>
+      <form id="contact-form">
+        <div class="field">
+          <label for="f-name">姓名</label>
+          <input id="f-name" type="text" placeholder="你的名字">
+        </div>
+        <div class="field">
+          <label for="f-email">邮箱</label>
+          <input id="f-email" type="email" placeholder="your@email.com">
+        </div>
+        <div class="field">
+          <label for="f-msg">留言</label>
+          <textarea id="f-msg" placeholder="想说些什么..."></textarea>
+        </div>
+        <button type="submit" class="submit-btn">✈️ 发送</button>
+      </form>
+    </div>
+
+  </div>
+
+  <footer>© 2026 青春不喂狗</footer>
+</div>
+
+<script>
+  // 背景音乐：自动播放 + 悬浮按钮控制
+  const bgm = document.getElementById('bgm');
+  const musicBtn = document.getElementById('music-btn');
+  function setPlaying(p) {
+    musicBtn.classList.toggle('spinning', p);
+    musicBtn.classList.toggle('paused', !p);
+  }
+  musicBtn.addEventListener('click', () => {
+    if (bgm.paused) {
+      bgm.play();
+    } else {
+      bgm.pause();
+    }
+  });
+  bgm.addEventListener('play', () => setPlaying(true));
+  bgm.addEventListener('pause', () => setPlaying(false));
+  bgm.volume = 0.9;
+  // 打开网页自动播放；若被浏览器拦截，用户首次点击页面任意处时再开始
+  bgm.play().catch(() => {
+    setPlaying(false);
+    const startLater = (e) => {
+      if (e && musicBtn.contains(e.target)) return; // 点音乐按钮时交给按钮自己处理
+      cleanup();
+      if (!bgm.paused) return; // 已经在播放就不再重复启动
+      bgm.play().catch(() => {});
+    };
+    const cleanup = () => {
+      document.removeEventListener('pointerdown', startLater);
+      document.removeEventListener('keydown', startLater);
+    };
+    document.addEventListener('pointerdown', startLater);
+    document.addEventListener('keydown', startLater);
+    musicBtn.addEventListener('click', cleanup, { once: true });
+  });
+
+  // 发送消息（无后端，拼接 mailto 调起邮件客户端）
+  const contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('f-name').value.trim();
+      const email = document.getElementById('f-email').value.trim();
+      const msg = document.getElementById('f-msg').value.trim();
+      const subject = encodeURIComponent('来自 ' + (name || '访客') + ' 的留言');
+      const body = encodeURIComponent((msg || '') + '\n\n—— 姓名：' + (name || '') + '　邮箱：' + (email || ''));
+      window.location.href = 'mailto:1594006270@qq.com?subject=' + subject + '&body=' + body;
+    });
+  }
+</script>
+
+</body></html>

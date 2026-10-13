@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>慧行山海 · 项目介绍</title>
+<style>
+  :root {
+    --glass: rgba(20, 32, 46, 0.55);
+    --glass-border: rgba(255, 255, 255, 0.16);
+    --text: #ffffff;
+    --text-dim: rgba(255, 255, 255, 0.72);
+    --accent: #f2b25c;                    /* 暖琥珀 */
+    --pink: rgba(244, 143, 177, 0.85);    /* 粉 */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--text);
+    background: #0d1824;
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== 背景层 ===== */
+  .bg { position: fixed; inset: 0; z-index: -2; overflow: hidden; }
+  .bg video { width: 100%; height: 100%; object-fit: cover; }
+  .bg-mask {
+    position: fixed; inset: 0; z-index: -1;
+    background: linear-gradient(180deg, rgba(8, 18, 28, 0.82) 0%, rgba(8, 18, 28, 0.90) 100%);
+  }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 26px 22px 60px; }
+
+  .glass {
+    background: var(--glass);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+    border-radius: 18px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  /* ===== 顶部返回 ===== */
+  .topbar { display: flex; align-items: center; margin-bottom: 18px; }
+  .back {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 999px;
+    background: var(--glass); backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+    color: var(--text); text-decoration: none; font-size: 14px;
+    transition: transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .back:hover { transform: translateX(-3px); border-color: var(--accent); color: var(--accent); }
+
+  /* ===== Hero ===== */
+  .hero { padding: 38px 30px 32px; text-align: center; }
+  .hero h1 {
+    font-size: 34px; font-weight: 800; letter-spacing: 2px;
+    background: linear-gradient(90deg, #ffd9a0, var(--pink), #ffd9a0);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .tagline { margin-top: 14px; font-size: 15px; color: var(--text-dim); max-width: 640px; margin-left: auto; margin-right: auto; }
+
+  .tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 18px; }
+  .tag {
+    font-size: 12px; color: #fff; background: rgba(244, 143, 177, 0.26);
+    border: 1px solid var(--glass-border); border-radius: 999px; padding: 4px 14px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  }
+
+  .quote { margin-top: 20px; font-size: 16px; color: #ffd9a0; letter-spacing: 1px; }
+
+  .actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 22px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 24px; border-radius: 999px; text-decoration: none; font-size: 14px; font-weight: 600;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn:hover { transform: translateY(-3px); }
+  .btn-primary {
+    color: #1a1207;
+    background: linear-gradient(135deg, #ffd9a0, var(--accent));
+    box-shadow: 0 8px 22px rgba(242, 178, 92, 0.35);
+  }
+  .btn-ghost {
+    color: var(--text); background: var(--glass); backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ===== 内容段落 ===== */
+  .section { margin-top: 22px; padding: 24px 26px; }
+  .section-title {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 17px; font-weight: 700; letter-spacing: 1px; margin-bottom: 14px;
+  }
+  .section-title::after {
+    content: ""; flex: 1; height: 1px;
+    background: linear-gradient(90deg, var(--glass-border), transparent);
+  }
+
+  .section p { font-size: 14.5px; color: var(--text); }
+  .section .dim { color: var(--text-dim); }
+
+  ul.features { list-style: none; margin-top: 6px; }
+  ul.features li { position: relative; padding-left: 22px; margin-bottom: 10px; font-size: 14.5px; }
+  ul.features li::before {
+    content: ""; position: absolute; left: 2px; top: 10px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--pink));
+  }
+  ul.features li b { color: #ffd9a0; }
+
+  .block-sub { font-size: 15px; font-weight: 700; color: #ffd9a0; margin: 16px 0 8px; }
+
+  /* 技术栈表格 */
+  table.stack { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 4px; }
+  table.stack th, table.stack td { text-align: left; padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  table.stack th { color: var(--accent); font-weight: 600; width: 80px; }
+  table.stack td { color: var(--text); }
+
+  /* 链接列表 */
+  .links { display: flex; flex-direction: column; gap: 10px; }
+  .links a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; border-radius: 12px; text-decoration: none; font-size: 14px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border); color: var(--text);
+    transition: border-color 0.2s ease, transform 0.2s ease;
+  }
+  .links a:hover { border-color: var(--accent); transform: translateX(3px); }
+  .links a .lbl { color: var(--text-dim); }
+  .links a .url { color: #a8d8ff; word-break: break-all; margin-left: auto; }
+
+  footer { text-align: center; margin-top: 30px; font-size: 12px; color: var(--text-dim); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .hero, .section { animation: fadeUp 0.6s ease both; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 27px; }
+    table.stack th { width: 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg">
+  <video autoplay loop muted playsinline>
+    <source src="assets/background.mp4" type="video/mp4">
+  </video>
+</div>
+<div class="bg-mask"></div>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <a class="back" href="index.html">← 返回首页</a>
+  </div>
+
+  <!-- ================= Hero ================= -->
+  <header class="hero glass">
+    <h1>慧行山海</h1>
+    <p class="tagline">基于 AI 与电子地图的一站式旅游规划导览平台：350 个精品景区、3D 地球、720° 全景、AI 避雷指数，以及 LangGraph 多 Agent 行程规划工作流。</p>
+    <div class="tags">
+      <span class="tag">AI 旅游规划</span>
+      <span class="tag">LangGraph</span>
+      <span class="tag">FastAPI</span>
+      <span class="tag">Next.js</span>
+      <span class="tag">高德地图</span>
+    </div>
+    <p class="quote">「出发前，先看见真实的河山；出发后，不踩任何一个雷。」</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="https://mw2wbyys6t-sudo.github.io/huixing-shanhai/" target="_blank" rel="noopener">在线体验 ↗</a>
+      <a class="btn btn-ghost" href="https://github.com/tim-ux123/huixingshanhai" target="_blank" rel="noopener">查看源码</a>
+    </div>
+  </header>
+
+  <!-- ================= 项目简介 ================= -->
+  <div class="glass section">
+    <div class="section-title">项目简介</div>
+    <p>慧行山海是一个基于 AI 与电子地图的一站式旅游规划导览平台，围绕「看见河山 → 智能规划 → 出行辅助 → 内容社区」构建完整闭环：</p>
+    <ul class="features">
+      <li><b>🗺️ 看见河山</b>：350 个国内外精品景区（全国 5A 覆盖 + 世界五大洲）· 3D 地球探索 · 720° 全景漫游 · 实时天气 · 周边美食 · 游客实拍墙</li>
+      <li><b>⚡ 避雷避坑</b>：AI 避雷指数（NLP 情感分析）· 宣传图 vs 实拍对比 · 高风险景区提醒</li>
+      <li><b>🧭 智能规划</b>：LangGraph 多 Agent 工作流 · 跨城交通方案 · 逐日行程 · 预算管控 · 质量评估自动修订</li>
+      <li><b>💬 内容社区</b>：游记 / 攻略发布 · 评论点赞互动 · 实时聚合旅游资讯</li>
+    </ul>
+  </div>
+
+  <!-- ================= 数据立场 ================= -->
+  <div class="glass section">
+    <div class="section-title">数据立场</div>
+    <p class="dim">不编造任何评价与数据 —— 评价来自站内真实统计，美食来自高德实时 POI，视频以 B 站官方播放器嵌入并强制标注来源与作者，图片来自 Wikimedia Commons，外部数据不可用时诚实标注。</p>
+  </div>
+
+  <!-- ================= 技术栈 ================= -->
+  <div class="glass section">
+    <div class="section-title">技术栈</div>
+    <table class="stack">
+      <tr><th>前端</th><td>Next.js 14、TypeScript、Tailwind CSS、React Three Fiber、Lucide</td></tr>
+      <tr><th>后端</th><td>FastAPI、SQLAlchemy、LangGraph、httpx、DeepSeek API</td></tr>
+      <tr><th>地图</th><td>高德 JS API 2.0（地图 / 路线）、高德 Web API（天气 / POI）</td></tr>
+      <tr><th>数据</th><td>SQLite（开发）/ PostgreSQL（生产可配）、JSON 景区库</td></tr>
+      <tr><th>部署</th><td>GitHub Pages（前端）+ Render（后端），render.yaml 蓝图一键部署</td></tr>
+    </table>
+  </div>
+
+  <!-- ================= 已实现功能 ================= -->
+  <div class="glass section">
+    <div class="section-title">已实现功能</div>
+
+    <div class="block-sub">前端</div>
+    <ul class="features">
+      <li><b>首页</b>：Hero 轮播、站内搜索、精选推荐</li>
+      <li><b>探索发现</b>：搜索（300ms 防抖 + 竞态防护）、省份 / 类型筛选、分页</li>
+      <li><b>景区详情</b>：图片轮播、实景环视（拖拽 + 时段光影）、实时天气、门票费用参考与交通建议、AI 避雷分析、游客评价、UGC 实拍墙、周边美食（高德 POI）、宣传视频（B 站官方播放器）</li>
+      <li><b>游记社区</b>：游记 / 攻略发布（关联景区联想）、列表筛选排序、详情阅读与点赞、评论互动</li>
+      <li><b>旅游资讯</b>：实时聚合热门目的地天气、最新社区内容、最新评价与避雷提醒</li>
+      <li><b>避雷指南</b>：风险分级统计、避雷排行榜、避雷知识科普</li>
+      <li><b>智能规划</b>：LangGraph 多 Agent 工作流可视化（SSE 实时进度）、跨城交通方案、AI 行程输出渲染、导出 / 分享</li>
+      <li><b>AI 助手</b>：DeepSeek 驱动对话、多会话管理（本地持久化）、后端在线状态检测</li>
+      <li><b>3D 地球</b>：React Three Fiber 地球 + 景区标记（按避雷指数着色）+ 飞行路线</li>
+      <li><b>账号体系</b>：注册 / 登录（密码 + 验证码）/ 忘记密码</li>
+    </ul>
+
+    <div class="block-sub">后端</div>
+    <ul class="features">
+      <li><b>景区 API</b>：列表 / 筛选 / 分页 / 搜索 / 推荐 / 避雷指数 / 门票与交通</li>
+      <li><b>高德能力</b>：地理编码 → 实时天气；周边美食：高德 POI 检索</li>
+      <li><b>认证</b>：PBKDF2 密码哈希、HMAC-SHA256 签名 token</li>
+      <li><b>AI</b>：DeepSeek 对话、避雷情感分析、LangGraph 多 Agent 工作流（意图解析 → 4 路并行分析 → 行程汇聚 → 质量评估 → 自动修订）</li>
+      <li><b>实时资讯</b>：天气 + 社区 + 评价 + 避雷四路聚合（10 分钟缓存）</li>
+    </ul>
+  </div>
+
+  <!-- ================= 安全设计 ================= -->
+  <div class="glass section">
+    <div class="section-title">安全设计</div>
+    <ul class="features">
+      <li>所有密钥通过 backend/.env 注入，源码与 .env.example 中无真实密钥</li>
+      <li>密码使用 PBKDF2-SHA256 加盐哈希存储，旧明文数据在登录时自动透明升级</li>
+      <li>上传接口：扩展名白名单 + 10MB 上限 + 文件魔数校验 + 服务端生成文件名</li>
+      <li>所有列表接口分页参数有上下限，工作流反馈轮次限制 0-3（防 LLM 调用放大）</li>
+      <li>CORS 白名单可配置（默认仅放行本地前端）</li>
+    </ul>
+  </div>
+
+  <!-- ================= 在线体验 ================= -->
+  <div class="glass section">
+    <div class="section-title">在线体验</div>
+    <ul class="features">
+      <li><b>前端</b>：mw2wbyys6t-sudo.github.io/huixing-shanhai</li>
+      <li><b>演示账号</b>：13800138000 / 123456</li>
+      <li><b>API 文档</b>：huixing-shanhai.onrender.com/docs</li>
+      <li><b>免费云部署</b>：前端托管 GitHub Pages（全球 CDN 永不休眠），后端托管 Render 免费实例（15 分钟无访问休眠，首次打开约需 50 秒唤醒，之后流畅）。</li>
+    </ul>
+  </div>
+
+  <!-- ================= 设计原则 ================= -->
+  <div class="glass section">
+    <div class="section-title">设计原则</div>
+    <ul class="features">
+      <li><b>体验前置</b> —— 3D 地球与 720° 全景，未出发先看见</li>
+      <li><b>AI 避雷</b> —— 结构化评估，一眼判断值不值得去</li>
+      <li><b>真实可信</b> —— 不编造评价与数据，无数据时诚实提示</li>
+      <li><b>分层解耦</b> —— 前后端分离，前端可静态导出并在无后端时优雅降级</li>
+    </ul>
+  </div>
+
+  <!-- ================= 许可证 ================= -->
+  <div class="glass section">
+    <div class="section-title">许可证</div>
+    <p class="dim">MIT License</p>
+  </div>
+
+  <!-- ================= 相关链接 ================= -->
+  <div class="glass section">
+    <div class="section-title">相关链接</div>
+    <div class="links">
+      <a href="https://mw2wbyys6t-sudo.github.io/huixing-shanhai/" target="_blank" rel="noopener"><span class="lbl">在线体验</span><span class="url">mw2wbyys6t-sudo.github.io/huixing-shanhai</span></a>
+      <a href="https://huixing-shanhai.onrender.com/docs" target="_blank" rel="noopener"><span class="lbl">API 文档</span><span class="url">huixing-shanhai.onrender.com/docs</span></a>
+      <a href="https://github.com/tim-ux123/huixingshanhai" target="_blank" rel="noopener"><span class="lbl">源码（GitHub）</span><span class="url">github.com/tim-ux123/huixingshanhai</span></a>
+    </div>
+  </div>
+
+  <footer>© 2026 青春不喂狗 · 慧行山海项目介绍</footer>
+</div>
+
+</body></html>
