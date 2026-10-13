@@ -298,7 +298,7 @@
   bgm.addEventListener('pause', () => setPlaying(false));
   bgm.volume = 0.9;
   // 打开网页就尝试有声自动播放；若被浏览器拦截，改为静音播放，
-  // 用户第一次点击/按键时立即恢复声音（浏览器安全策略要求至少一次交互）
+  // 用户第一次点击/按键/滑动时恢复声音（浏览器安全策略要求至少一次交互）
   bgm.play().then(() => setPlaying(true)).catch(() => {
     bgm.muted = true;
     bgm.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
@@ -308,12 +308,37 @@
       bgm.muted = false;
       if (bgm.paused) bgm.play().catch(() => {});
     };
+    // 滑动/滚动也尝试恢复声音：部分浏览器不把滚动算作有效交互，
+    // 会被拦回静音（此时自动恢复静音播放，等下一次点击/按键）
+    let scrollTried = false;
+    const scrollUnmute = () => {
+      if (scrollTried) return;
+      scrollTried = true;
+      window.removeEventListener('wheel', scrollUnmute);
+      window.removeEventListener('scroll', scrollUnmute);
+      window.removeEventListener('touchmove', scrollUnmute);
+      bgm.muted = false;
+      setTimeout(() => {
+        if (bgm.paused) {
+          bgm.muted = true;              // 被浏览器拦回去了：恢复静音播放
+          bgm.play().catch(() => {});
+        } else {
+          cleanup();                     // 成功出声了：移除全部监听
+        }
+      }, 180);
+    };
     const cleanup = () => {
       document.removeEventListener('pointerdown', unmute);
       document.removeEventListener('keydown', unmute);
+      window.removeEventListener('wheel', scrollUnmute);
+      window.removeEventListener('scroll', scrollUnmute);
+      window.removeEventListener('touchmove', scrollUnmute);
     };
     document.addEventListener('pointerdown', unmute);
     document.addEventListener('keydown', unmute);
+    window.addEventListener('wheel', scrollUnmute, { passive: true });
+    window.addEventListener('scroll', scrollUnmute, { passive: true });
+    window.addEventListener('touchmove', scrollUnmute, { passive: true });
     musicBtn.addEventListener('click', cleanup, { once: true });
   });
 
