@@ -690,6 +690,10 @@
     musicBtn.classList.toggle('paused', !p);
   }
   musicBtn.addEventListener('click', () => {
+    if (bgm.muted) {        // 静音自动播放中：先恢复声音
+      bgm.muted = false;
+      return;
+    }
     if (bgm.paused) {
       bgm.play();
     } else {
@@ -699,21 +703,23 @@
   bgm.addEventListener('play', () => setPlaying(true));
   bgm.addEventListener('pause', () => setPlaying(false));
   bgm.volume = 0.9;
-  // 打开网页自动播放；若被浏览器拦截，用户首次点击页面任意处时再开始
-  bgm.play().catch(() => {
-    setPlaying(false);
-    const startLater = (e) => {
+  // 打开网页就尝试有声自动播放；若被浏览器拦截，改为静音播放，
+  // 用户第一次点击/按键时立即恢复声音（浏览器安全策略要求至少一次交互）
+  bgm.play().then(() => setPlaying(true)).catch(() => {
+    bgm.muted = true;
+    bgm.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+    const unmute = (e) => {
       if (e && musicBtn.contains(e.target)) return; // 点音乐按钮时交给按钮自己处理
       cleanup();
-      if (!bgm.paused) return; // 已经在播放就不再重复启动
-      bgm.play().catch(() => {});
+      bgm.muted = false;
+      if (bgm.paused) bgm.play().catch(() => {});
     };
     const cleanup = () => {
-      document.removeEventListener('pointerdown', startLater);
-      document.removeEventListener('keydown', startLater);
+      document.removeEventListener('pointerdown', unmute);
+      document.removeEventListener('keydown', unmute);
     };
-    document.addEventListener('pointerdown', startLater);
-    document.addEventListener('keydown', startLater);
+    document.addEventListener('pointerdown', unmute);
+    document.addEventListener('keydown', unmute);
     musicBtn.addEventListener('click', cleanup, { once: true });
   });
 </script>
