@@ -703,6 +703,25 @@
   bgm.addEventListener('play', () => setPlaying(true));
   bgm.addEventListener('pause', () => setPlaying(false));
   bgm.volume = 0.9;
+
+  // 全局覆盖：记住播放进度与开关，切换页面时从刚才的位置接着放
+  const savePos = () => {
+    try {
+      localStorage.setItem('bgm-pos', String(bgm.currentTime || 0));
+      localStorage.setItem('bgm-on', bgm.paused ? '0' : '1');
+    } catch (e) {}
+  };
+  bgm.addEventListener('timeupdate', savePos);
+  bgm.addEventListener('pause', savePos);
+  window.addEventListener('pagehide', savePos);
+
+  const savedPos = parseFloat(localStorage.getItem('bgm-pos') || '0');
+  const wasOn = localStorage.getItem('bgm-on') !== '0';
+  const applyPos = () => { try { if (savedPos > 1) bgm.currentTime = savedPos; } catch (e) {} };
+  if (bgm.readyState >= 1) applyPos();
+  else bgm.addEventListener('loadedmetadata', applyPos, { once: true });
+
+  if (wasOn) {
   // 打开网页就尝试有声自动播放；若被浏览器拦截，改为静音播放，
   // 用户第一次点击/按键/滑动时恢复声音（浏览器安全策略要求至少一次交互）
   bgm.play().then(() => setPlaying(true)).catch(() => {
@@ -747,6 +766,9 @@
     window.addEventListener('touchmove', scrollUnmute, { passive: true });
     musicBtn.addEventListener('click', cleanup, { once: true });
   });
+  } else {
+    setPlaying(false);          // 上次是暂停状态：保持安静，点按钮继续
+  }
 </script>
 
 </body></html>
